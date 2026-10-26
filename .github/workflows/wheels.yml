@@ -14,16 +14,34 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.13
+        python-version: 3.12
 
     - name: Install wheel and SDist requirements
       run: python -m pip install "setuptools>=42.0" wheel twine
 
     - name: Build SDist
-      run: python3 -m pip wheel . -v -w ./dist/
+      run: ppython3 -m pip wheel . -v -w ./dist/
 
     - uses: actions/upload-artifact@v4
       with:
         path: |
             dist/*.tar.gz
             dist/*.whl
+
+  publish:
+    needs: [buildpackage]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+
+    permissions:
+      id-token: write
+
+    environment: release
+
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: artifact
+        path: dist
+
+    - uses: pypa/gh-action-pypi-publish@v1.13.0
