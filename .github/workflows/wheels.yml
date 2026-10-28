@@ -9,15 +9,12 @@ on:
 
 jobs:
   buildpackage:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.15
+        python-version: 3.12
 
     - name: Install wheel and SDist requirements
       run: python -m pip install "setuptools>=42.0" wheel twine
